@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Glue Job demo
+
+Resources:
+
+  GlueJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Name: glue_gold_layer_aggregation
+      Role: arn:aws:iam::XXXXXXXXXX:role/aws-demo-glue-service-role
+      Command:
+        Name: glueetl
+        ScriptLocation: s3://aegon-aws-demo-git-scripts/glue_scripts/glue_gold_layer_job.py
+        PythonVersion: "3"
+      DefaultArguments:
+        "--job-bookmark-option": "job-bookmark-disable"
+        "--TempDir": "s3://aegon-aws-demo-git-scripts/temp/"
+        "--enable-metrics": "true"
+        "--enable-continuous-cloudwatch-log": "true"
+        # parameters
+        "--INPUT_PATH": "s3://aeogn-aws-demo-2025-curated/product_sales/"
+        "--OUTPUT_PATH": "s3://aeogn-aws-demo-2025-processed/sale_agg/"
+        "--DATABASE_NAME": "processed_gold"
+        "--TABLE_NAME": "sales_agg"
+      GlueVersion: "5.0"
+      MaxRetries: 0
+      Timeout: 10
+      NumberOfWorkers: 2
+      WorkerType: G.1X
